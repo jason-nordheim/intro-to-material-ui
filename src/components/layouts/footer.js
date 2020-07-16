@@ -1,18 +1,26 @@
 import React from "react";
-import { Paper, Tabs, Tab } from '@material-ui/core'
+import { Paper, Tabs, Tab } from "@material-ui/core";
 
-export default (props) => {
+export default ({ muscles, onSelect, category }) => {
+  // plua one to account for the "all" category 
+  const index = category ? muscles.findIndex(group => group === category) + 1 : 0 
+
+  const onIndexSelect = (e, index) => {
+     onSelect(index === 0 ? "" : muscles[index - 1]);
+  }
   return (
     <Paper>
       <Tabs
-        value={0}
+        value={index}
         indicatorColor="primary"
         textColor="primary"
         centered
+        onChange={onIndexSelect}
       >
-        <Tab label="Item One" />
-        <Tab label="Item Two" />
-        <Tab label="Item Three" />
+        <Tab label="All" />
+        {muscles.map((mGroup) => (
+          <Tab label={mGroup} />
+        ))}
       </Tabs>
     </Paper>
   );
