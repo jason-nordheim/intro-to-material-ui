@@ -19,22 +19,50 @@ const getExercisesByMuscles = (exercises) => {
 export default (props) => {
   const [category, setCategory] = useState("");
   const [exercise, setExercise] = useState(null);
-  const _exercises = getExercisesByMuscles(exercises);
+  const [exerciseList, setExerciseList] = useState(
+    getExercisesByMuscles(exercises)
+  );
   const handleCategorySelected = (category) => {
     setCategory(category);
   };
+
   const handleExerciseSelected = (id) => {
-    const ex = exercises.find((ex) => ex.id === id);
-    setExercise(ex);
+    exerciseList.forEach((category) => {
+      const ex = category[1].find((ex) => ex.id === id);
+      if (ex) setExercise(ex);
+    });
+  };
+
+  const handleExerciseCreate = (newExercise) => {
+    let exExists = false 
+    let newId = 1 
+    exercises.forEach(ex => {
+      if (newId < ex.id) {
+        newId = ex.id 
+      } 
+
+      if(ex.title === newExercise.title){
+        exExists = true 
+        console.error('exercise already exists')
+        return 
+      }
+    })
+    
+    if(exExists === false){
+      const newEx = {...newExercise, id: (newId + 1)}
+      console.log('adding...', newEx)
+      exercises.push(newEx)
+      setExerciseList(getExercisesByMuscles(exercises))
+    }
   };
 
   return (
     <>
-      <Header />
+      <Header onCreate={handleExerciseCreate} />
       <Exercises
         category={category}
         exercise={exercise}
-        exercises={_exercises}
+        exercises={exerciseList}
         onSelect={handleExerciseSelected}
       />
       <Footer
